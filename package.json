@@ -1,0 +1,47 @@
+{
+  "name": "gulp-caveman",
+  "version": "1.0.0",
+  "description": "Compile Caveman templates on the server-side using Gulp.",
+  "license": "MIT",
+  "author": {
+    "name": "Adrian Bruinhout",
+    "email": "adrian@webfella.com.au",
+    "url": "http://github.com/webfella"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webfella/gulp-caveman"
+  },
+  "homepage": "https://github.com/webfella/gulp-caveman",
+  "bugs": {
+    "url": "https://github.com/webfella/gulp-caveman/issues"
+  },
+  "engines": {
+    "node": ">=5.0.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "gulp",
+    "gulpplugin",
+    "gulp-caveman",
+    "caveman",
+    "templates",
+    "js",
+    "javascript",
+    "ecmascript"
+  ],
+  "dependencies": {
+    "caveman": "^0.1.4",
+    "glob": "^6.0.4",
+    "gulp-util": "^3.0.7",
+    "through2": "^2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  }
+}
