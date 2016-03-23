@@ -17,24 +17,10 @@ var gulp = require('gulp');
 var gulpCaveman = require('gulp-caveman');
 
 gulp.task('default', function () {
-    return gulp.src('src/app.js')
-        .pipe(gulpCaveman('src/templates/*.html'))
+    return gulp.src('src/templates/*.html')
+        .pipe(gulpCaveman())
         .pipe(gulp.dest('public'));
 });
-```
-
-## API
-
-### gulpCaveman(templates)
-
-#### templates
-Type: `String` or `Array`
-Default: `''`
-
-An array or string to the locations of your templates
-
-```js
-  ['path/to/first/template.html', 'path/to/second/*.html']
 ```
 
 ## License

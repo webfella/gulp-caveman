@@ -1,14 +1,17 @@
 'use strict';
 
-var fs = require('fs'),
-    path = require('path');
+var path = require('path');
 
 var Caveman = require('caveman'),
-    glob = require('glob'),
+    Concat = require('concat-with-sourcemaps'),
     gutil = require('gulp-util'),
     through = require('through2');
 
-module.exports = function (templates) {
+var File = gutil.File;
+
+module.exports = function () {
+    var concatenated, lastFile, latestMod;
+
     return through.obj(function (file, enc, cb) {
         if (file.isNull()) {
             cb(null, file);
@@ -20,50 +23,48 @@ module.exports = function (templates) {
             return;
         }
 
+        if (!latestMod || file.stat && file.stat.mtime > latestMod) {
+            lastFile = file;
+            latestMod = file.stat && file.stat.mtime;
+        }
+
+        var filename = path.basename(file.path, '.html');
+
+        if (!concatenated) {
+            concatenated = new Concat(false, filename, gutil.linefeed);
+        }
+
         try {
-            file.contents = compileTemplates(file.contents, templates, cb);
-            this.push(file);
+            concatenated.add(file.relative, compileTemplate(filename, file.contents.toString(), cb));
         } catch (err) {
             this.emit('error', new gutil.PluginError('gulp-caveman', err, {fileName: file.path}));
         }
 
         cb();
+    }, function (cb) {
+        if (!lastFile || !concatenated) {
+            cb();
+            return;
+        }
+
+        var file = new File(lastFile);
+
+        file.contents = concatenated.content;
+
+        this.push(file);
+        cb();
     });
 };
 
-function compileTemplates (contents, templates, cb) {
-    if (!templates) {
-        return contents;
+function compileTemplate (fileName, fileContents, cb) {
+    var template = '';
+
+    try {
+        let compiled = Caveman.compile(fileContents);
+        template = `Caveman.register("${fileName}", function(Caveman, d) { ${compiled} });`;
+    } catch (err) {
+        cb(new gutil.PluginError('gulp-caveman', 'Error compiling Caveman template ' + fileName));
     }
 
-    if (typeof templates === 'string') {
-        templates = [templates];
-    }
-
-    var templateCount = 0;
-    var compiled = templates.map(function (pattern) {
-      var templateFiles = glob.sync(pattern);
-      templateCount = templateCount + templateFiles.length;
-
-      return templateFiles.reduce(function (previous, current) {
-          var name = path.basename(current, path.extname(current)),
-              template = '';
-
-          try {
-              let compiled = Caveman.compile(fs.readFileSync(current).toString());
-              template = `Caveman.register("${name}", function(Caveman, d) { ${compiled} });\n`;
-          } catch (err) {
-              cb(new gutil.PluginError('gulp-caveman', 'Error compiling Caveman template ' + name));
-          }
-
-          return previous + template;
-      }, '');
-    });
-
-    if (templateCount) {
-      let templateMsg = templateCount === 1 ? 'template saved.' : 'templates saved.'
-      gutil.log(templateCount, templateMsg);
-    }
-
-    return new Buffer(compiled.join('') + contents.toString());
+    return new Buffer(template);
 }

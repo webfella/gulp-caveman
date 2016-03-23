@@ -1,6 +1,6 @@
 {
   "name": "gulp-caveman",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Compile Caveman templates on the server-side using Gulp.",
   "license": "MIT",
   "author": {
@@ -37,7 +37,7 @@
   ],
   "dependencies": {
     "caveman": "^0.1.4",
-    "glob": "^6.0.4",
+    "concat-with-sourcemaps": "^1.0.4",
     "gulp-util": "^3.0.7",
     "through2": "^2.0.0"
   },
