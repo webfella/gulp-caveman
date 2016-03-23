@@ -4,7 +4,7 @@ var assert = require('assert'),
     gutil = require('gulp-util'),
     gulpCaveman = require('./');
 
-describe('gulp caveman', function() {
+xdescribe('gulp caveman', function() {
     var contents = 'function test(){}';
 
     it("doesn't edit the file when no templates are present", function (cb) {
